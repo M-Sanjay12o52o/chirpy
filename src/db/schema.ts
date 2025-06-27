@@ -7,6 +7,7 @@ export const users = pgTable("users", {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()), // onUpdate fn sets the updatedAt field to a default value whenever the row is updated.
+  hashed_password: varchar("hashed_password").notNull().default("unset"),
   email: varchar("email", { length: 256 }).unique().notNull(),
 });
 

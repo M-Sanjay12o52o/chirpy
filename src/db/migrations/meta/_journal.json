@@ -15,6 +15,13 @@
       "when": 1751009064232,
       "tag": "0001_shiny_white_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751021035663,
+      "tag": "0002_red_machine_man",
+      "breakpoints": true
     }
   ]
 }
