@@ -1,5 +1,10 @@
 process.loadEnvFile();
 
+const rawPlatform = process.env.PLATFORM;
+if (rawPlatform !== "dev" && rawPlatform !== "prod") {
+  throw new Error("Invalid PLATFORM value. Must be 'dev' or 'prod'.");
+}
+
 type DBMigrationConfig = {
   migrationsFolder: string;
 };
@@ -9,9 +14,12 @@ type DBConfig = {
   migrationConfig: DBMigrationConfig;
 };
 
+type Platform = "dev" | "prod";
+
 type AppConfig = {
   fileserverHits: number;
   db: DBConfig;
+  platform: Platform;
 };
 
 export const config: AppConfig = {
@@ -22,4 +30,5 @@ export const config: AppConfig = {
       migrationsFolder: "./src/db/migrations",
     },
   },
+  platform: rawPlatform,
 };

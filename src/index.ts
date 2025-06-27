@@ -4,8 +4,12 @@ import { handlerMetrics } from "./handlers/no_of_requests.js";
 import { handlerReset } from "./handlers/reset.js";
 import { middlewareMetricsInc } from "./middlewares/fileServerHits.js";
 import { middlewareLogResponses } from "./middlewares/logResponses.js";
-import { handlerValidateChirps } from "./handlers/validate_chirp.js";
+// import { handlerValidateChirps } from "./handlers/validate_chirp.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
+import { handleCreateUser } from "./handlers/createUser.js";
+import { handleCreateChirps } from "./handlers/createChirps.js";
+import { handlerGetChirps } from "./handlers/getChirps.js";
+import { handlerGetChirp } from "./handlers/getChirp.js";
 
 const app = express();
 app.use(express.json());
@@ -21,7 +25,12 @@ app.get("/admin/metrics", handlerMetrics);
 // app.get("/api/reset", handlerReset);
 app.post("/admin/reset", handlerReset);
 
-app.post("/api/validate_chirp", handlerValidateChirps);
+// app.post("/api/validate_chirp", handlerValidateChirps);
+app.post("/api/users", handleCreateUser);
+app.post("/api/chirps", handleCreateChirps);
+
+app.get("/api/chirps", handlerGetChirps);
+app.get("/api/chirps/:chirpId", handlerGetChirp);
 
 app.use(errorHandler);
 
