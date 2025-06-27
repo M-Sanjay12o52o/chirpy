@@ -20,6 +20,7 @@ type AppConfig = {
   fileserverHits: number;
   db: DBConfig;
   platform: Platform;
+  secret: string;
 };
 
 export const config: AppConfig = {
@@ -31,4 +32,5 @@ export const config: AppConfig = {
     },
   },
   platform: rawPlatform,
+  secret: process.env.SECRET!,
 };

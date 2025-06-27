@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
+import type { Request } from "express";
 
 export async function hashPassword(password: string) {
   const hashed_password = await bcrypt.hash(password, 10);
@@ -50,10 +51,39 @@ export function makeJWT(
 // - [ ] If the token is invalid, throw a suitable error.
 // - [ ] Return the user's `id` from the token (which should be stored in the `sub` field).
 
-export function validateJWT(tokenString: string, secret: string): string {
-  const result = jwt.verify(tokenString, secret);
+// export function validateJWT(tokenString: string, secret: string): string {
+//   const result = jwt.verify(tokenString, secret);
 
-  console.log("result: ", result);
+//   console.log("result: ", result);
 
-  return "";
+//   return "";
+// }
+
+export function validateJWT(tokenString: string, secret: string): JwtPayload {
+  const decoded = jwt.verify(tokenString, secret);
+  if (typeof decoded === "string") throw new Error("Invalid token");
+  return decoded;
+}
+
+// Auth information will come into our server in the `Authorization`
+// header. Its value will look like this:
+// Bearer TOKEN_STRING
+export function getBearerToken(req: Request): string {
+  // - [x] Should look for the Authorization header in the request
+  // - [x] and return the `TOKEN_STRING` if it exists (stripping off the `Bearer` prefix and whitespace).
+  // We can use the request's `.get` method.
+  // - [x] If the header doesn't exist, throw an error.
+  // - [ ] Write unit tests.
+
+  const authHeader = req.get("Authorization");
+
+  console.log("authHeader: ", authHeader);
+
+  console.log("authHeader.split(' ')[1]:", authHeader?.split(" ")[1]);
+
+  if (!authHeader) {
+    throw Error("Header not present");
+  }
+
+  return authHeader.split(" ")[1];
 }
