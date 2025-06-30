@@ -5,3 +5,5 @@ dist/
 server.log
 
 .env
+
+notes.md

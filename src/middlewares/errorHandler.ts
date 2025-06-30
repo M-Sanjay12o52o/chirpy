@@ -20,7 +20,11 @@ export function errorHandler(
     res.status(err.statusCode).json({ error: err.message });
   }
 
-  res.status(500).json({
+  // res.status(500).json({
+  //   error: "Something went wrong on our end",
+  // });
+
+  res.status(401).json({
     error: "Something went wrong on our end",
   });
 }

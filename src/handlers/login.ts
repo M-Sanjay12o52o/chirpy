@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
-import { checkPasswordHash, makeJWT } from "../auth.js";
+import { checkPasswordHash, makeJWT, makeRefreshToken } from "../auth.js";
 import { db } from "../db/index.js";
 import { eq } from "drizzle-orm";
-import { NewUser } from "../db/schema.js";
+import { NewUser, refresh_tokens } from "../db/schema.js";
 import { users } from "../db/schema.js";
 import { config } from "../config.js";
 
@@ -12,13 +12,8 @@ export async function handleLogin(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   const { email, password } = req.body;
-  let expiresInSeconds = req.body.expiresInSeconds ?? 3600;
-
-  if (expiresInSeconds > 3600) {
-    expiresInSeconds = 3600;
-  }
 
   if (!email || !password) {
     res.status(400).json({
@@ -26,51 +21,62 @@ export async function handleLogin(
     });
   }
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
-
-  const hashed_password = user?.hashed_password;
-
-  const match = await checkPasswordHash(password, hashed_password!);
-
-  console.log("---Start---");
-  console.log("email: ", email);
-  console.log("password: ", password);
-  console.log("user: ", user);
-  console.log("hashed_password: ", hashed_password);
-  console.log("match: ", match);
-  console.log("---End---");
-
-  /*
-  {
-  "id": "5a47789c-a617-444a-8a80-b50359247804",
-  "createdAt": "2021-07-01T00:00:00Z",
-  "updatedAt": "2021-07-01T00:00:00Z",
-  "email": "lane@example.com",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-  }
-  */
-
-  // - [x] Once you have the token, respond to the request with
-  // a `200` code and this body shape:
-
-  if (match && user) {
-    const token = makeJWT(user.id, expiresInSeconds, config.secret);
-    const { hashed_password, ...safeUser } = user;
-
-    res.status(200).json({
-      ...(safeUser as UserResponse),
-      token,
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
-  } else {
-    res.status(401).json("Email or Password does not match.");
+
+    if (user) {
+      const match = await checkPasswordHash(password, user.hashed_password);
+
+      if (match) {
+        // - [ ] Make sure whether access tokens (JWTs) expires after 1 hours.
+        // - [ ] Make sure refresh tokens expire after 60 days.
+        // - [ ] And also make sure the expiration time is also stored in the database.
+        // - [ ] The `revoked_at` field should be `null` when the token is created.
+
+        // Questions:
+        // - [ ] Should refresh token change on each login?
+        const accessTokenExpiry = 60 * 60;
+        const refreshTokenExpiry = 60 * 24 * 60 * 60 * 1000;
+
+        console.log("---Start---");
+        console.log("accessTokenExpiry: ", accessTokenExpiry);
+        console.log("refreshTokenExpiry: ", refreshTokenExpiry);
+        console.log("---End---");
+
+        const accessToken = makeJWT(user.id, accessTokenExpiry, config.secret);
+        const refreshToken = makeRefreshToken();
+
+        console.log("---Start---");
+        console.log("accessToken: ", accessToken);
+        console.log("refreshToken: ", refreshToken);
+        console.log("---End---");
+
+        await db.insert(refresh_tokens).values({
+          token: refreshToken,
+          userId: user.id,
+          expires_at: new Date(Date.now() + refreshTokenExpiry),
+          revoked_at: null,
+        });
+
+        const { hashed_password, ...safeUser } = user;
+
+        // - [ ] update to return a refresh token, as well as an access token
+        res.status(200).json({
+          ...(safeUser as UserResponse),
+          token: accessToken,
+          refreshToken: refreshToken,
+        });
+      } else {
+        res.status(401).json("Email or Password does not match");
+      }
+    } else {
+      res.status(401).json("Email or Password does not match");
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    // res.status(401).json("Email or Password does not match");
+    res.status(500).json("Internal Server Error");
   }
 }
-
-/*
-if (match) {
-  const { hashed_password, ...safeUser } = user!;
-  res.status(200).json(safeUser as UserResponse);
-}
-*/

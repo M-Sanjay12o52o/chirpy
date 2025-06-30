@@ -11,6 +11,9 @@ import { handleCreateChirps } from "./handlers/createChirps.js";
 import { handlerGetChirps } from "./handlers/getChirps.js";
 import { handlerGetChirp } from "./handlers/getChirp.js";
 import { handleLogin } from "./handlers/login.js";
+import { handlerGetUsers } from "./handlers/getUsers.js";
+import { handleRefresh } from "./handlers/refresh.js";
+import { handleRevoke } from "./handlers/revoke.js";
 
 const app = express();
 app.use(express.json());
@@ -25,11 +28,14 @@ app.get("/api/healthz", handlerReadiness);
 app.get("/admin/metrics", handlerMetrics);
 // app.get("/api/reset", handlerReset);
 app.post("/admin/reset", handlerReset);
+app.get("/api/users", handlerGetUsers);
 
 // app.post("/api/validate_chirp", handlerValidateChirps);
 app.post("/api/users", handleCreateUser);
 app.post("/api/chirps", handleCreateChirps);
 app.post("/api/login", handleLogin);
+app.post("/api/refresh", handleRefresh);
+app.post("/api/revoke", handleRevoke);
 
 app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);

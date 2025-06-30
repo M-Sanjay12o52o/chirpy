@@ -22,6 +22,27 @@
       "when": 1751021035663,
       "tag": "0002_red_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1751090804202,
+      "tag": "0003_volatile_george_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1751091396370,
+      "tag": "0004_tough_mantis",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751191518656,
+      "tag": "0005_pretty_speedball",
+      "breakpoints": true
     }
   ]
 }
