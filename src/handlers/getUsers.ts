@@ -9,11 +9,14 @@ The returned json doesn't contain all the chirps.
 
 export async function handlerGetUsers(req: Request, res: Response) {
   try {
-    const users = await db.query.users.findMany();
+    const usersRaw = await db.query.users.findMany();
+    // const users = usersRaw.map((user) => ({
+    //   ...user,
+    //   isChirpyRed: user.is_chirpy_red,
+    // }));
 
-    console.log("users: ", users);
-
-    res.status(200).json(users);
+    // res.status(200).json(users);
+    res.status(200).json(usersRaw);
   } catch (error) {
     res.status(404).json({
       error: "Not found",
