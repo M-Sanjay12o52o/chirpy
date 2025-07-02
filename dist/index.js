@@ -15,6 +15,7 @@ import { handlerGetUsers } from "./handlers/getUsers.js";
 import { handleRefresh } from "./handlers/refresh.js";
 import { handleRevoke } from "./handlers/revoke.js";
 import { handleUserupdate } from "./handlers/userUpdate.js";
+import { handleDelete } from "./handlers/delete.js";
 const app = express();
 app.use(express.json());
 const PORT = 8080;
@@ -36,6 +37,11 @@ app.post("/api/revoke", handleRevoke);
 app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
 app.put("/api/users", handleUserupdate);
+app.delete("/api/chirps/:chirpID", handleDelete);
+// app.delete("/api/chirps/:chirpID", (req, res) => {
+//   console.log("Hit DELETE endpoint");
+//   res.sendStatus(204);
+// });
 app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

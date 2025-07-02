@@ -24,7 +24,11 @@ export async function handlerGetChirp(req: Request, res: Response) {
 
     console.log("result: ", result);
 
-    res.status(200).json(result);
+    if (result !== undefined) {
+      res.status(200).json(result);
+    }
+
+    res.status(404).end();
   } catch (error) {
     res.status(404).json({
       error: "Not found",

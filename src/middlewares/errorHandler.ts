@@ -14,19 +14,22 @@ export function errorHandler(
     return next(err);
   }
 
-  console.log(`${err}`);
+  console.log(`Global error: ${err}`);
 
   if (err instanceof CustomError) {
     res.status(err.statusCode).json({ error: err.message });
+    return;
   }
 
   // res.status(500).json({
   //   error: "Something went wrong on our end",
   // });
+  // return;
 
   res.status(401).json({
     error: "Something went wrong on our end",
   });
+  return;
 }
 
 // - [x] It should log the error using `console.log` and return a JSON response.

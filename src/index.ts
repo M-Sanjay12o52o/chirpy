@@ -15,6 +15,7 @@ import { handlerGetUsers } from "./handlers/getUsers.js";
 import { handleRefresh } from "./handlers/refresh.js";
 import { handleRevoke } from "./handlers/revoke.js";
 import { handleUserupdate } from "./handlers/userUpdate.js";
+import { handleDelete } from "./handlers/delete.js";
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,13 @@ app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
 
 app.put("/api/users", handleUserupdate);
+
+app.delete("/api/chirps/:chirpID", handleDelete);
+
+// app.delete("/api/chirps/:chirpID", (req, res) => {
+//   console.log("Hit DELETE endpoint");
+//   res.sendStatus(204);
+// });
 
 app.use(errorHandler);
 
