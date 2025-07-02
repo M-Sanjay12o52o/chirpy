@@ -14,6 +14,7 @@ import { handleLogin } from "./handlers/login.js";
 import { handlerGetUsers } from "./handlers/getUsers.js";
 import { handleRefresh } from "./handlers/refresh.js";
 import { handleRevoke } from "./handlers/revoke.js";
+import { handleUserupdate } from "./handlers/userUpdate.js";
 const app = express();
 app.use(express.json());
 const PORT = 8080;
@@ -34,6 +35,7 @@ app.post("/api/refresh", handleRefresh);
 app.post("/api/revoke", handleRevoke);
 app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
+app.put("/api/users", handleUserupdate);
 app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
