@@ -83,3 +83,14 @@ export function makeRefreshToken() {
 
   return refresh_tokens;
 }
+
+export function getAPIKey(req: Request) {
+  const authHeader = req.header("Authorization");
+
+  if (!authHeader) return null;
+
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "ApiKey") return null;
+
+  return parts[1];
+}

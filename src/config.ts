@@ -21,6 +21,7 @@ type AppConfig = {
   db: DBConfig;
   platform: Platform;
   secret: string;
+  polka_key: string;
 };
 
 export const config: AppConfig = {
@@ -33,4 +34,5 @@ export const config: AppConfig = {
   },
   platform: rawPlatform,
   secret: process.env.SECRET!,
+  polka_key: process.env.POLKA_KEY!,
 };

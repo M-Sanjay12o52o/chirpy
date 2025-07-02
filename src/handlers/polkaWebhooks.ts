@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
+import { getAPIKey } from "../auth.js";
+import { config } from "../config.js";
+import { ForbiddenError, UnauthorizedError } from "../customErrors.js";
 
 export async function handlePolkaWebhooks(
   req: Request,
@@ -21,11 +24,16 @@ export async function handlePolkaWebhooks(
 
   const { event, data } = req.body;
   const userId = data.userId;
+  const apiKey = getAPIKey(req);
 
-  // - [x] if the `event` is anything other than `user.upgraded`, the endpoint should
-  // immediately respond with a `204` status code - we don't care about any other events.
+  if (apiKey !== config.polka_key) {
+    throw new UnauthorizedError("API Key doesn't match.");
+  }
 
   if (event !== "user.upgraded") {
+    // - [x] if the `event` is anything other than `user.upgraded`, the endpoint should
+    // immediately respond with a `204` status code - we don't care about any other events.
+
     res.status(204).end();
     return;
   }
